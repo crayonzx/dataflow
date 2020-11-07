@@ -223,7 +223,7 @@ lead of failure on some of the code.")
         self.procs = [MultiProcessRunner._Worker(self.ds, self.queue, idx)
                       for idx in range(self.num_proc)]
         ensure_proc_terminate(self.procs)
-        self._reset_done = False
+        start_proc_mask_signal(self.procs)
 
     def __iter__(self):
         for k in itertools.count():
@@ -233,9 +233,8 @@ lead of failure on some of the code.")
             yield dp
 
     def reset_state(self):
-        assert not self._reset_done, "reset_state() was called twice! This violates the API of DataFlow!"
-        self._reset_done = True
-        start_proc_mask_signal(self.procs)
+        # do nothing. all ds are reset once and only once in spawned processes
+        pass
 
 
 class MultiProcessRunnerZMQ(_MultiProcessZMQDataFlow):
